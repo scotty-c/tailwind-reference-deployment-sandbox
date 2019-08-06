@@ -102,8 +102,10 @@ az storage blob upload-batch --destination $BLOB_ENDPOINT --destination profiles
 # Deploy Azure DevOps organization and project
 printf "\n***Deploying Azure DevOps organization and project.***\n"
 
-az group deployment create -g $azureResourceGroup --template-file /deployment-artifacts/azuredeploy-devops.json \
-  --parameters parameters=twt-demo-123
+sleep 240m
+
+# az group deployment create -g $azureResourceGroup --template-file /deployment-artifacts/azuredeploy-devops.json \
+#   --parameters parameters=twt-demo-123
 
 # Notes
 echo "*************** Connection Information ***************"
