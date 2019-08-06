@@ -68,21 +68,21 @@ kubectl apply -f $tailwindServiceAccount
 # Deploy application to Kubernetes
 printf "\n***Deplpying applications to Kubernetes.***\n"
 
-# INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
-# helm install --name my-tt-product -f $tailwindChartValues --set az.productvisitsurl=http://your-product-visits-af-here --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/product.api --set image.tag=latest $tailwindCharts/products-api
-# helm install --name my-tt-coupon -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/coupon.api --set image.tag=latest $tailwindCharts/coupons-api
-# helm install --name my-tt-profile -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/profile.api --set image.tag=latest $tailwindCharts/profiles-api
-# helm install --name my-tt-popular-product -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/popular-product.api --set image.tag=latest --set initImage.repository=$containerRegistry/popular-product-seed.api --set initImage.tag=latest $tailwindCharts/popular-products-api
-# helm install --name my-tt-stock -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/stock.api --set image.tag=latest $tailwindCharts/stock-api
-# helm install --name my-tt-image-classifier -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/image-classifier.api --set image.tag=latest $tailwindCharts/image-classifier-api
-# helm install --name my-tt-cart -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/cart.api --set image.tag=latest $tailwindCharts/cart-api
-# helm install --name my-tt-login -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=latest $tailwindCharts/login-api
-# helm install --name my-tt-mobilebff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/mobileapigw --set image.tag=latest $tailwindCharts/mobilebff
-# helm install --name my-tt-webbff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=latest $tailwindCharts/webbff
+INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
+helm install --name my-tt-product -f $tailwindChartValues --set az.productvisitsurl=http://your-product-visits-af-here --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/product.api --set image.tag=latest $tailwindCharts/products-api
+helm install --name my-tt-coupon -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/coupon.api --set image.tag=latest $tailwindCharts/coupons-api
+helm install --name my-tt-profile -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/profile.api --set image.tag=latest $tailwindCharts/profiles-api
+helm install --name my-tt-popular-product -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/popular-product.api --set image.tag=latest --set initImage.repository=$containerRegistry/popular-product-seed.api --set initImage.tag=latest $tailwindCharts/popular-products-api
+helm install --name my-tt-stock -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/stock.api --set image.tag=latest $tailwindCharts/stock-api
+helm install --name my-tt-image-classifier -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/image-classifier.api --set image.tag=latest $tailwindCharts/image-classifier-api
+helm install --name my-tt-cart -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/cart.api --set image.tag=latest $tailwindCharts/cart-api
+helm install --name my-tt-login -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=latest $tailwindCharts/login-api
+helm install --name my-tt-mobilebff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/mobileapigw --set image.tag=latest $tailwindCharts/mobilebff
+helm install --name my-tt-webbff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=latest $tailwindCharts/webbff
 
-# # Issue to fix with upstream: https://github.com/microsoft/TailwindTraders-Website/commit/0ab7e92f437c45fd6ac5c7c489e88977fd1f6ebc
-# git clone https://github.com/neilpeterson/TailwindTraders-Website.git
-# helm install --name web -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=latest TailwindTraders-Website/Deploy/helm/web/
+# Issue to fix with upstream: https://github.com/microsoft/TailwindTraders-Website/commit/0ab7e92f437c45fd6ac5c7c489e88977fd1f6ebc
+git clone https://github.com/neilpeterson/TailwindTraders-Website.git
+helm install --name web -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=latest TailwindTraders-Website/Deploy/helm/web/
 
 # Copy website images to storage
 printf "\n***Copying application images (graphics) to Azure storage.***\n"
@@ -99,6 +99,12 @@ az storage blob upload-batch --destination $BLOB_ENDPOINT --destination product-
 az storage blob upload-batch --destination $BLOB_ENDPOINT --destination product-list --source $tailwindWebImages/product-list --account-name $STORAGE
 az storage blob upload-batch --destination $BLOB_ENDPOINT --destination profiles-list --source $tailwindWebImages/profiles-list --account-name $STORAGE
 
+# Deploy Azure DevOps organization and project
+printf "\n***Deploying Azure DevOps organization and project.***\n"
+
+az group deployment create -g $azureResourceGroup --template-file /deployment-artifacts/azuredeploy-devops.json \
+  --parameters parameters=twt-demo-123
+
 # Notes
 echo "*************** Connection Information ***************"
 echo "The Tailwind Traders Website can be accessed at:"
@@ -107,5 +113,3 @@ echo ""
 echo "Run the following to connect to the AKS cluster:"
 echo "az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin"
 echo "******************************************************"
-
-sleep 240m
