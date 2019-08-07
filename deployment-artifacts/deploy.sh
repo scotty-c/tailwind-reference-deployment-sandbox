@@ -99,14 +99,6 @@ az storage blob upload-batch --destination $BLOB_ENDPOINT --destination product-
 az storage blob upload-batch --destination $BLOB_ENDPOINT --destination product-list --source $tailwindWebImages/product-list --account-name $STORAGE
 az storage blob upload-batch --destination $BLOB_ENDPOINT --destination profiles-list --source $tailwindWebImages/profiles-list --account-name $STORAGE
 
-# Deploy Azure DevOps organization and project
-printf "\n***Deploying Azure DevOps organization and project.***\n"
-
-sleep 240m
-
-# az group deployment create -g $azureResourceGroup --template-file /deployment-artifacts/azuredeploy-devops.json \
-#   --parameters parameters=twt-demo-123
-
 # Notes
 echo "*************** Connection Information ***************"
 echo "The Tailwind Traders Website can be accessed at:"
