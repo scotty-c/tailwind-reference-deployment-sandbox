@@ -15,12 +15,6 @@ inf:
       catalog: profile
       user: {{dbuser}}
       pwd: {{dbpwd}}
-    rewards:
-      host: {{dbhostrewards}}
-      port: "1433"
-      catalog: rewards
-      user: {{dbuserrewards}}
-      pwd: {{dbpwdrewards}}
     coupons:
       user: {{couponsuser}}
       pwd: {{couponspwd}}
@@ -79,9 +73,6 @@ inf:
     stockapiurl: http://stock
     imageclassifierapiurl: http://imageclassifier
     loginapiurl: http://login
-  registrationusers:
-    registerusers: false
-    registrationusersurl: http://rewards-registration/UserService.svc
 az:
   productvisitsurl: ""
 
@@ -105,21 +96,3 @@ ingress:
 sec:
   issuer: {{secissuer}}
   securityKey: {{seckey}}
-
-B2C:
-  UseB2C: "false"
-  B2CIssuer: ""
-  Authority: ""
-  tenantID: ""
-  clientID: ""
-  policyName: ""
-  identityMetadata: ""
-  issuer: ""
-
-# Autoscaling global settings
-hpa:
-  activated: false # set to true to deploy HPA for services
-  cpu:
-    averageUtilization: 40
-  minReplicas: 1
-  maxReplicas: 40
