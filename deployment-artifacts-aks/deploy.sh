@@ -15,8 +15,8 @@ containerVersion=v1
 # Tailwind deployment
 tailwindInfrastructure=TailwindTraders-Backend/Deploy/deployment.json
 tailwindCharts=TailwindTraders-Backend/Deploy/helm
-tailwindChartValuesScript=TailwindTraders-Backend/Deploy/Generate-Config.ps1
-tailwindChartValues=../../../values.yaml
+tailwindChartValuesScript=/deployment-artifacts-aks/helm-values/Generate-Config.ps1
+tailwindChartValues=/deployment-artifacts-aks/helm-values/values.yaml
 tailwindWebImages=TailwindTraders-Backend/Deploy/tt-images
 tailwindServiceAccount=TailwindTraders-Backend/Deploy/helm/ttsa.yaml
 
@@ -45,14 +45,6 @@ az extension add -n application-insights
 az monitor app-insights component create --app tailwind --location eastus --kind web --resource-group $azureResourceGroup --application-type web
 instrumentationKey=$(az monitor app-insights component show --app tailwind --resource-group $azureResourceGroup --query instrumentationKey -o tsv)
 
-# Install Helm on Kubernetes cluster
-printf "\n*** Installing Tiller on Kubernets cluster... ***\n"
-
-AKS_CLUSTER=$(az aks list --resource-group $azureResourceGroup --query [0].name -o tsv)
-az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin
-kubectl apply -f https://raw.githubusercontent.com/Azure/helm-charts/master/docs/prerequisities/helm-rbac-config.yaml
-helm init --wait --service-account tiller
-
 # Create postgres DB, Disable SSL, and set Firewall
 printf "\n*** Create stockdb Postgres database... ***\n"
 
@@ -61,15 +53,23 @@ az postgres db create -g $azureResourceGroup -s $POSTGRES -n stockdb
 az postgres server update --resource-group $azureResourceGroup --name $POSTGRES --ssl-enforcement Disabled
 az postgres server firewall-rule create --resource-group $azureResourceGroup --server-name $POSTGRES --name AllowAllAzureIps --start-ip-address 0.0.0.0 --end-ip-address 0.0.0.0
 
-# Create Helm values file
-printf "\n*** Create Helm values file... ***\n"
+# Install Helm on Kubernetes cluster
+printf "\n*** Installing Tiller on Kubernets cluster... ***\n"
 
-pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile values.yaml
+AKS_CLUSTER=$(az aks list --resource-group $azureResourceGroup --query [0].name -o tsv)
+az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin
+kubectl apply -f https://raw.githubusercontent.com/Azure/helm-charts/master/docs/prerequisities/helm-rbac-config.yaml
+helm init --wait --service-account tiller
 
 # Create Kubernetes Service Account
 printf "\n*** Create Helm service account in Kubernetes... ***\n"
 
 kubectl apply -f $tailwindServiceAccount
+
+# Create Helm values file
+printf "\n*** Create Helm values file... ***\n"
+
+pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile $tailwindChartValues
 
 # Deploy application to Kubernetes
 printf "\n***Deplpying applications to Kubernetes.***\n"
@@ -89,7 +89,7 @@ helm install --name my-tt-webbff -f $tailwindChartValues --set ingress.hosts={$I
 
 # Issue to fix with upstream: https://github.com/microsoft/TailwindTraders-Website/commit/0ab7e92f437c45fd6ac5c7c489e88977fd1f6ebc
 git clone https://github.com/neilpeterson/TailwindTraders-Website.git
-helm install --name web -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=latest TailwindTraders-Website/Deploy/helm/web/
+helm install --name web -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=$containerVersion TailwindTraders-Website/Deploy/helm/web/
 
 # Copy website images to storage
 printf "\n***Copying application images (graphics) to Azure storage.***\n"
