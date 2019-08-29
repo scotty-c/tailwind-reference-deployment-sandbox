@@ -15,7 +15,7 @@ containerVersion=v2
 # Tailwind deployment
 tailwindInfrastructure=TailwindTraders-Backend/Deploy/deployment.json
 tailwindCharts=TailwindTraders-Backend/Deploy/helm
-tailwindChartValuesScript=/deployment-artifacts-aks/helm-values/generate-config.ps1
+tailwindChartValuesScript=tailwind-reference-deployment-sandbox/deployment-artifacts-aks/helm-values/generate-config.ps1
 tailwindChartValues=/values.yaml
 tailwindWebImages=TailwindTraders-Backend/Deploy/tt-images
 tailwindServiceAccount=TailwindTraders-Backend/Deploy/helm/ttsa.yaml
@@ -30,8 +30,6 @@ echo "*************** Connection Information ***************"
 printf "\n*** Cloning Tailwind code repository... ***\n"
 
 git clone https://github.com/microsoft/TailwindTraders-Backend.git
-
-sleep 20m
 
 # Deploy backend infrastructure
 printf "\n*** Deploying resources: this will take a few minutes... ***\n"

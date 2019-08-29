@@ -98,4 +98,4 @@ Write-Host ($tokens | ConvertTo-Json) -ForegroundColor Yellow
 
 Write-Host "===========================================================" -ForegroundColor Yellow
 
-& .\token-replace.ps1 -inputFile $gvaluesTemplate -outputFile $outputFile -tokens $tokens
+& /tailwind-reference-deployment-sandbox/deployment-artifacts-aks/helm-values/token-replace.ps1 -inputFile $gvaluesTemplate -outputFile $outputFile -tokens $tokens
