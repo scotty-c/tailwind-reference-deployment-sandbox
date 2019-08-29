@@ -31,6 +31,8 @@ printf "\n*** Cloning Tailwind code repository... ***\n"
 
 git clone https://github.com/microsoft/TailwindTraders-Backend.git
 
+sleep 20m
+
 # Deploy backend infrastructure
 printf "\n*** Deploying resources: this will take a few minutes... ***\n"
 
