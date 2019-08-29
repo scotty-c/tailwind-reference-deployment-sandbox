@@ -5,12 +5,12 @@ set -e
 azureClientID=$CLIENT_ID
 azureClientSecret=$SECRET
 sqlServerUser=sqladmin
-sqlServePassword=Password12
+sqlServePassword=Password2020!
 
 # Azure and container image location
 azureResourceGroup=$RESOURCE_GROUP_NAME
 containerRegistry=neilpeterson
-containerVersion=v1
+containerVersion=v2
 
 # Tailwind deployment
 tailwindInfrastructure=TailwindTraders-Backend/Deploy/deployment.json
@@ -72,7 +72,7 @@ printf "\n*** Create Helm values file... ***\n"
 
 # Change dir because of https://github.com/microsoft/TailwindTraders-Backend/blob/master/Deploy/Generate-Config.ps1#L101
 cd TailwindTraders-Backend/Deploy
-pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile $tailwindChartValues
+pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile $tailwindChartValues -infraOutsideAKS false
 cd ../../
 
 # Deploy application to Kubernetes
