@@ -109,3 +109,5 @@ echo ""
 echo "Run the following to connect to the AKS cluster:"
 echo "az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin"
 echo "******************************************************"
+
+sleep 20m
