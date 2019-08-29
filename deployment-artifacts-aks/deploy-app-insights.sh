@@ -15,8 +15,8 @@ containerVersion=v2
 # Tailwind deployment
 tailwindInfrastructure=TailwindTraders-Backend/Deploy/deployment.json
 tailwindCharts=TailwindTraders-Backend/Deploy/helm
-tailwindChartValuesScript=Generate-Config.ps1
-tailwindChartValues=../../../values.yaml
+tailwindChartValuesScript=/deployment-artifacts-aks/helm-values/generate-config.ps1
+tailwindChartValues=/values.yaml
 tailwindWebImages=TailwindTraders-Backend/Deploy/tt-images
 tailwindServiceAccount=TailwindTraders-Backend/Deploy/helm/ttsa.yaml
 
@@ -29,8 +29,6 @@ echo "*************** Connection Information ***************"
 # Get backend code
 printf "\n*** Cloning Tailwind code repository... ***\n"
 
-# Issue to fix with upstream: https://github.com/microsoft/TailwindTraders-Backend/blob/master/Deploy/Generate-Config.ps1#L92
-# git clone https://github.com/neilpeterson/TailwindTraders-Backend.git
 git clone https://github.com/microsoft/TailwindTraders-Backend.git
 
 # Deploy backend infrastructure
@@ -70,10 +68,7 @@ kubectl apply -f $tailwindServiceAccount
 # Create Helm values file
 printf "\n*** Create Helm values file... ***\n"
 
-# Change dir because of https://github.com/microsoft/TailwindTraders-Backend/blob/master/Deploy/Generate-Config.ps1#L101
-cd TailwindTraders-Backend/Deploy
-pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile $tailwindChartValues -infraOutsideAKS $false
-cd ../../
+pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile $tailwindChartValues
 
 # Deploy application to Kubernetes
 printf "\n***Deplpying applications to Kubernetes.***\n"
