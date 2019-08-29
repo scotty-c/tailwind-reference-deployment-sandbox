@@ -72,7 +72,7 @@ printf "\n*** Create Helm values file... ***\n"
 
 # Change dir because of https://github.com/microsoft/TailwindTraders-Backend/blob/master/Deploy/Generate-Config.ps1#L101
 cd TailwindTraders-Backend/Deploy
-pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile $tailwindChartValues -infraOutsideAKS false
+pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile $tailwindChartValues -infraOutsideAKS $false
 cd ../../
 
 # Deploy application to Kubernetes
