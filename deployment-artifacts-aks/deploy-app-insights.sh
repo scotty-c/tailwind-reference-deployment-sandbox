@@ -39,6 +39,11 @@ az group deployment create -g $azureResourceGroup --template-file $tailwindInfra
   sqlServerAdministratorLogin=$sqlServerUser sqlServerAdministratorLoginPassword=$sqlServePassword \
   aksVersion=1.14.5 pgversion=10
 
+# Application Insights (using preview extension)
+az extension add -n application-insights
+az monitor app-insights component create --app tailwind --location eastus --kind web --resource-group $azureResourceGroup --application-type web
+instrumentationKey=$(az monitor app-insights component show --app tailwind --resource-group $azureResourceGroup --query instrumentationKey -o tsv)
+
 # Create postgres DB, Disable SSL, and set Firewall
 printf "\n*** Create stockdb Postgres database... ***\n"
 
