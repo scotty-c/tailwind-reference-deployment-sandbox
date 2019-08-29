@@ -68,7 +68,7 @@ kubectl apply -f $tailwindServiceAccount
 # Create Helm values file
 printf "\n*** Create Helm values file... ***\n"
 
-pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd Password12 -outputFile $tailwindChartValues
+pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd $sqlServePassword -outputFile $tailwindChartValues
 
 # Deploy application to Kubernetes
 printf "\n***Deplpying applications to Kubernetes.***\n"
@@ -89,7 +89,7 @@ helm install --name my-tt-webbff -f $tailwindChartValues --set ingress.hosts={$I
 
 # Issue to fix with upstream: https://github.com/microsoft/TailwindTraders-Website/commit/0ab7e92f437c45fd6ac5c7c489e88977fd1f6ebc
 git clone https://github.com/neilpeterson/TailwindTraders-Website.git
-helm install --name web -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=$containerVersion TailwindTraders-Website/Deploy/helm/web/
+helm install --name web -f TailwindTraders-Website/Deploy/helm/gvalues.yaml --set ingress.protocol=http --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/web --set image.tag=v1 TailwindTraders-Website/Deploy/helm/web/
 
 # Copy website images to storage
 printf "\n***Copying application images (graphics) to Azure storage.***\n"
