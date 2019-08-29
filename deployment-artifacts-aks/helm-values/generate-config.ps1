@@ -4,7 +4,7 @@ Param (
     [parameter(Mandatory=$false)][string]$outputFile=$null,
     [parameter(Mandatory=$false)][string]$gvaluesTemplate=".\\helm\\gvalues.template",
     [parameter(Mandatory=$false)][bool]$forcePwd=$false,
-    [parameter(Mandatory=$true)][bool]$infraOutsideAKS=$true
+    [parameter(Mandatory=$false)][bool]$infraOutsideAKS=$true
 )
 
 function EnsureAndReturnFistItem($arr, $restype) {
