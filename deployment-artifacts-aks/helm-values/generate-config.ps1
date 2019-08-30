@@ -2,7 +2,7 @@ Param (
     [parameter(Mandatory=$true)][string]$resourceGroup,
     [parameter(Mandatory=$true)][string]$sqlPwd,
     [parameter(Mandatory=$false)][string]$outputFile=$null,
-    [parameter(Mandatory=$false)][string]$gvaluesTemplate="/tailwind-reference-deployment-sandbox/deployment-artifacts-aks/helm-values/gvalues.template",
+    [parameter(Mandatory=$false)][string]$gvaluesTemplate="$PSScriptRoot/gvalues.template",
     [parameter(Mandatory=$false)][bool]$forcePwd=$false,
     [parameter(Mandatory=$false)][bool]$infraOutsideAKS=$true
 )
@@ -37,8 +37,9 @@ if ($infraOutsideAKS) {
     Write-Host "PostgreSQL Server: $($pg.name)" -ForegroundColor Yellow
 
     ## Getting storage info
-    $storage=$(az storage account list -g $resourceGroup --query "[].{name: name, blob: primaryEndpoints.blob}" -o json | ConvertFrom-Json)
-    $storage=EnsureAndReturnFistItem $storage "Storage Account"
+    #$storage=$(az storage account list -g $resourceGroup --query "[].{name: name, blob: primaryEndpoints.blob}" -o json | ConvertFrom-Json)
+    #$storage=EnsureAndReturnFistItem $storage "Storage Account"
+    $storage=$(az storage account list -g twt-appi-001 --query [0].primaryEndpoints.blob -o tsv)
     Write-Host "Storage Account: $($storage.name)" -ForegroundColor Yellow
 
     ## Getting CosmosDb info
@@ -98,4 +99,4 @@ Write-Host ($tokens | ConvertTo-Json) -ForegroundColor Yellow
 
 Write-Host "===========================================================" -ForegroundColor Yellow
 
-& /tailwind-reference-deployment-sandbox/deployment-artifacts-aks/helm-values/token-replace.ps1 -inputFile $gvaluesTemplate -outputFile $outputFile -tokens $tokens
+& $PSScriptRoot/token-replace.ps1 -inputFile $gvaluesTemplate -outputFile $outputFile -tokens $tokens
