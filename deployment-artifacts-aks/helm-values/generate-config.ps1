@@ -40,7 +40,7 @@ if ($infraOutsideAKS) {
     #$storage=$(az storage account list -g $resourceGroup --query "[].{name: name, blob: primaryEndpoints.blob}" -o json | ConvertFrom-Json)
     #$storage=EnsureAndReturnFistItem $storage "Storage Account"
     $storage=$(az storage account list -g $resourceGroup --query [0].primaryEndpoints.blob -o tsv)
-    Write-Host "Storage Account: $($storage.name)" -ForegroundColor Yellow
+    # Write-Host "Storage Account: $($storage.name)" -ForegroundColor Yellow
 
     ## Getting CosmosDb info
     $docdb=$(az cosmosdb list -g $resourceGroup --query "[?kind=='GlobalDocumentDB'].{name: name, kind:kind, documentEndpoint:documentEndpoint}" -o json | ConvertFrom-Json)
@@ -81,7 +81,7 @@ if ($infraOutsideAKS) {
     $tokens.couponshost="$($mongodb.name).documents.azure.com"
     $tokens.couponspwd=$mongodbKey
 
-    $tokens.storage=$storage.blob
+    $tokens.storage=$storage
 }
 
 ## Getting App Insights instrumentation key
