@@ -39,11 +39,6 @@ az group deployment create -g $azureResourceGroup --template-file $tailwindInfra
   sqlServerAdministratorLogin=$sqlServerUser sqlServerAdministratorLoginPassword=$sqlServePassword \
   aksVersion=1.14.5 pgversion=10
 
-# Application Insights (using preview extension)
-az extension add -n application-insights
-az monitor app-insights component create --app tailwind --location eastus --kind web --resource-group $azureResourceGroup --application-type web
-instrumentationKey=$(az monitor app-insights component show --app tailwind --resource-group $azureResourceGroup --query instrumentationKey -o tsv)
-
 # Create postgres DB, Disable SSL, and set Firewall
 printf "\n*** Create stockdb Postgres database... ***\n"
 
@@ -84,7 +79,7 @@ helm install --name my-tt-popular-product -f $tailwindChartValues --set ingress.
 helm install --name my-tt-stock -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/stock.api --set image.tag=$containerVersion $tailwindCharts/stock-api
 helm install --name my-tt-image-classifier -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/image-classifier.api --set image.tag=$containerVersion $tailwindCharts/image-classifier-api
 helm install --name my-tt-cart -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/cart.api --set image.tag=$containerVersion $tailwindCharts/cart-api
-helm install --name my-tt-mobilebff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/mobileapigw --set image.tag=$containerVersion $tailwindCharts/mobilebff
+helm install --name my-tt-mobilebff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/mobileapigw --set image.tag=v1 $tailwindCharts/mobilebff
 helm install --name my-tt-webbff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=$containerVersion $tailwindCharts/webbff
 
 # Issue to fix with upstream: https://github.com/microsoft/TailwindTraders-Website/commit/0ab7e92f437c45fd6ac5c7c489e88977fd1f6ebc
