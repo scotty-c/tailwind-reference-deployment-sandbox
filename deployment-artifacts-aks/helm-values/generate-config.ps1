@@ -39,7 +39,7 @@ if ($infraOutsideAKS) {
     ## Getting storage info
     #$storage=$(az storage account list -g $resourceGroup --query "[].{name: name, blob: primaryEndpoints.blob}" -o json | ConvertFrom-Json)
     #$storage=EnsureAndReturnFistItem $storage "Storage Account"
-    $storage=$(az storage account list -g twt-appi-001 --query [0].primaryEndpoints.blob -o tsv)
+    $storage=$(az storage account list -g $resourceGroup --query [0].primaryEndpoints.blob -o tsv)
     Write-Host "Storage Account: $($storage.name)" -ForegroundColor Yellow
 
     ## Getting CosmosDb info
