@@ -74,7 +74,7 @@ pwsh $tailwindChartValuesScript -resourceGroup $azureResourceGroup -sqlPwd $sqlS
 printf "\n***Deplpying applications to Kubernetes.***\n"
 
 INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
-$storage=$(az storage account list -g $azureResourceGroup --query [0].primaryEndpoints.blob -o tsv)
+storage=$(az storage account list -g $azureResourceGroup --query [0].primaryEndpoints.blob -o tsv)
 
 # App Insights Versions
 helm install --name my-tt-login -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=$containerVersion --set inf.storage.profileimages=http://$storage/blobs/profiles-list $tailwindCharts/login-api
