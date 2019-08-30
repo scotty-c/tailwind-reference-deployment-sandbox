@@ -39,6 +39,11 @@ az group deployment create -g $azureResourceGroup --template-file $tailwindInfra
   sqlServerAdministratorLogin=$sqlServerUser sqlServerAdministratorLoginPassword=$sqlServePassword \
   aksVersion=1.14.5 pgversion=10
 
+# Application Insights (using preview extension)
+az extension add -n application-insights
+az monitor app-insights component create --app tailwind --location eastus --kind web --resource-group $azureResourceGroup --application-type web
+instrumentationKey=$(az monitor app-insights component show --app tailwind --resource-group $azureResourceGroup --query instrumentationKey -o tsv)
+
 # Create postgres DB, Disable SSL, and set Firewall
 printf "\n*** Create stockdb Postgres database... ***\n"
 
@@ -71,21 +76,15 @@ printf "\n***Deplpying applications to Kubernetes.***\n"
 INGRESS=$(az aks show -n $AKS_CLUSTER -g $azureResourceGroup --query addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName -o tsv)
 
 # App Insights Versions
-helm install --name my-tt-login -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=$containerVersion $tailwindCharts/login-api
-helm install --name my-tt-product -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/product.api --set image.tag=$containerVersion $tailwindCharts/products-api
-helm install --name my-tt-coupon -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/coupon.api --set image.tag=$containerVersion $tailwindCharts/coupons-api
-helm install --name my-tt-profile -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/profile.api --set image.tag=$containerVersion $tailwindCharts/profiles-api
-helm install --name my-tt-popular-product -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/popular-product.api --set image.tag=$containerVersion --set initImage.repository=$containerRegistry/popular-product-seed.api --set initImage.tag=latest $tailwindCharts/popular-products-api
-
-# helm install --name my-tt-login -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=$containerVersion --set inf.storage.profileimages=http://{$INGRESS}/blobs/devstoreaccount1/profiles-list $tailwindCharts/login-api
-# helm install --name my-tt-product -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/product.api --set image.tag=$containerVersion --set inf.storage.productimages=http://{$INGRESS}/blobs/devstoreaccount1/product-list --set inf.storage.productdetailimages=http://{$INGRESS}/blobs/devstoreaccount1/product-detail $tailwindCharts/products-api
-# helm install --name my-tt-coupon -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/coupon.api --set image.tag=$containerVersion --set inf.storage.couponimage=http://{$INGRESS}/blobs/devstoreaccount1/coupon-list $tailwindCharts/coupons-api
-# helm install --name my-tt-profile -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/profile.api --set image.tag=$containerVersion --set inf.storage.profileimages=http://{$INGRESS}/blobs/devstoreaccount1/profiles-list $tailwindCharts/profiles-api
-# helm install --name my-tt-popular-product -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/popular-product.api --set image.tag=$containerVersion --set initImage.repository=$containerRegistry/popular-product-seed.api --set initImage.tag=latest --set inf.storage.productimages=http://{$INGRESS}/blobs/devstoreaccount1/product-list $tailwindCharts/popular-products-api
+helm install --name my-tt-login -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/login.api --set image.tag=$containerVersion --set inf.storage.profileimages=http://{$INGRESS}/blobs/devstoreaccount1/profiles-list $tailwindCharts/login-api
+helm install --name my-tt-product -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/product.api --set image.tag=$containerVersion --set inf.storage.productimages=http://{$INGRESS}/blobs/devstoreaccount1/product-list --set inf.storage.productdetailimages=http://{$INGRESS}/blobs/devstoreaccount1/product-detail $tailwindCharts/products-api
+helm install --name my-tt-coupon -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/coupon.api --set image.tag=$containerVersion --set inf.storage.couponimage=http://{$INGRESS}/blobs/devstoreaccount1/coupon-list $tailwindCharts/coupons-api
+helm install --name my-tt-profile -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/profile.api --set image.tag=$containerVersion --set inf.storage.profileimages=http://{$INGRESS}/blobs/devstoreaccount1/profiles-list $tailwindCharts/profiles-api
+helm install --name my-tt-popular-product -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/popular-product.api --set image.tag=$containerVersion --set initImage.repository=$containerRegistry/popular-product-seed.api --set initImage.tag=latest --set inf.storage.productimages=http://{$INGRESS}/blobs/devstoreaccount1/product-list $tailwindCharts/popular-products-api
 helm install --name my-tt-stock -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/stock.api --set image.tag=$containerVersion $tailwindCharts/stock-api
 helm install --name my-tt-image-classifier -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/image-classifier.api --set image.tag=$containerVersion $tailwindCharts/image-classifier-api
 helm install --name my-tt-cart -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/cart.api --set image.tag=$containerVersion $tailwindCharts/cart-api
-helm install --name my-tt-mobilebff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/mobileapigw --set image.tag=v1 $tailwindCharts/mobilebff
+helm install --name my-tt-mobilebff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/mobileapigw --set image.tag=$containerVersion $tailwindCharts/mobilebff
 helm install --name my-tt-webbff -f $tailwindChartValues --set ingress.hosts={$INGRESS} --set image.repository=$containerRegistry/webapigw --set image.tag=$containerVersion $tailwindCharts/webbff
 
 # Issue to fix with upstream: https://github.com/microsoft/TailwindTraders-Website/commit/0ab7e92f437c45fd6ac5c7c489e88977fd1f6ebc
@@ -115,5 +114,3 @@ echo ""
 echo "Run the following to connect to the AKS cluster:"
 echo "az aks get-credentials --name $AKS_CLUSTER --resource-group $azureResourceGroup --admin"
 echo "******************************************************"
-
-sleep 20m
