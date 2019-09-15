@@ -14,7 +14,7 @@ containerVersion=v2
 
 # Tailwind deployment
 # tailwindInfrastructure=TailwindTraders-Backend/Deploy/deployment.json
-tailwindInfrastructuretailwind-reference-deployment-sandbox/deployment-artifacts-aks/deployment.json
+tailwindInfrastructure=tailwind-reference-deployment-sandbox/deployment-artifacts-aks/deployment.json
 # tailwindCharts=TailwindTraders-Backend/Deploy/helm
 tailwindCharts=tailwind-reference-deployment-sandbox/deployment-artifacts-aks/helm
 tailwindChartValuesScript=tailwind-reference-deployment-sandbox/deployment-artifacts-aks/helm-values/generate-config.ps1
