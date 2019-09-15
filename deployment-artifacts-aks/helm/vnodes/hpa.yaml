@@ -1,7 +1,0 @@
-resources:
-  limits:
-    cpu: "100m"
-  requests:
-    cpu: "100m"
-    
-hpa: false

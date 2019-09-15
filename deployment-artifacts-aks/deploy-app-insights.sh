@@ -13,10 +13,8 @@ containerRegistry=neilpeterson
 containerVersion=v2
 
 # Tailwind deployment
-# tailwindInfrastructure=TailwindTraders-Backend/Deploy/deployment.json
-tailwindInfrastructure=tailwind-reference-deployment-sandbox/deployment-artifacts-aks/deployment.json
-# tailwindCharts=TailwindTraders-Backend/Deploy/helm
-tailwindCharts=tailwind-reference-deployment-sandbox/deployment-artifacts-aks/helm
+tailwindInfrastructure=TailwindTraders-Backend/Deploy/deployment.json
+tailwindCharts=TailwindTraders-Backend/Deploy/helm
 tailwindChartValuesScript=tailwind-reference-deployment-sandbox/deployment-artifacts-aks/helm-values/generate-config.ps1
 tailwindChartValues=/values.yaml
 tailwindWebImages=TailwindTraders-Backend/Deploy/tt-images
@@ -32,7 +30,7 @@ echo "*************** Connection Information ***************"
 printf "\n*** Cloning Tailwind code repository... ***\n"
 
 # git clone https://github.com/microsoft/TailwindTraders-Backend.git
-# git clone https://github.com/neilpeterson/TailwindTraders-Backend.git
+git clone https://github.com/neilpeterson/TailwindTraders-Backend.git
 
 # Deploy backend infrastructure
 printf "\n*** Deploying resources: this will take a few minutes... ***\n"
