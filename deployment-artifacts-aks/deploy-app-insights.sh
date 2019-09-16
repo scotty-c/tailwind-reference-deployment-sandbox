@@ -30,7 +30,7 @@ echo "*************** Connection Information ***************"
 printf "\n*** Cloning Tailwind code repository... ***\n"
 
 # git clone https://github.com/microsoft/TailwindTraders-Backend.git
-git clone https://github.com/neilpeterson/TailwindTraders-Backend.git
+git clone https://github.com/nepeters007/TailwindTraders-Backend.git
 
 # Deploy backend infrastructure
 printf "\n*** Deploying resources: this will take a few minutes... ***\n"
