@@ -28,6 +28,7 @@ az provider register --namespace Microsoft.OperationsManagement
 az provider register --namespace Microsoft.ContainerService
 az provider register --namespace Microsoft.Sql
 az provider register --namespace Microsoft.ContainerRegistry
+az provider register --namespace Microsoft.insights
 ```
 
 ## Connect to deployment
